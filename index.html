@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>「幼児と人間関係」確認クイズ</title>
+    <style>
+        :root {
+            --primary-color: #4a7c59;
+            --primary-light: #e8f0eb;
+            --accent-color: #d97724;
+            --bg-color: #f7f9f6;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #e2e8f0;
+            --correct-color: #2e7d32;
+            --incorrect-color: #c62828;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #4a7c59, #3b6346);
+            color: white;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(74, 124, 89, 0.2);
+        }
+
+        header h1 {
+            font-size: 1.7rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .score-board {
+            font-weight: bold;
+            font-size: 1.05rem;
+            color: var(--primary-color);
+            background: var(--primary-light);
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background-color: #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin: 30px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 18px;
+            line-height: 1.7;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn-choice {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid var(--border-color);
+            background-color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-choice:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        .btn-choice.selected-maru {
+            background-color: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .btn-choice.selected-batsu {
+            background-color: #ffebee;
+            border-color: #c62828;
+            color: #c62828;
+        }
+
+        .btn-choice:disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        .result-box {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .result-box.correct {
+            background-color: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: var(--correct-color);
+        }
+
+        .result-box.incorrect {
+            background-color: #ffebee;
+            border: 1px solid #ef9a9a;
+            color: var(--incorrect-color);
+        }
+
+        .result-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation {
+            font-size: 0.95rem;
+            color: #333;
+            margin-top: 8px;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            header h1 { font-size: 1.3rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .btn-group { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>「幼児と人間関係」正誤判定クイズ</h1>
+        <p>〇か✕かを選んで問題の解説を確認しましょう</p>
+    </header>
+
+    <div class="controls">
+        <div class="filter-group">
+            <label for="round-select">回数絞り込み:</label>
+            <select id="round-select" onchange="filterQuestions()">
+                <option value="all">すべての回（全25問）</option>
+                <option value="2">2回目 (5問)</option>
+                <option value="3">3回目 (3問)</option>
+                <option value="4">4回目 (5問)</option>
+                <option value="5">5回目 (2問)</option>
+                <option value="6">6回目 (3問)</option>
+                <option value="7">7回目 (9問)</option>
+                <option value="8">8回目 (1問)</option>
+                <option value="10">10回目 (1問)</option>
+                <option value="11">11回目 (1問)</option>
+            </select>
+        </div>
+        <div class="score-board" id="score-display">正解数: 0 / 0</div>
+        <button class="reset-btn" onclick="resetQuiz()">リセット</button>
+    </div>
+
+    <div id="quiz-container">
+        <!-- Questions will be rendered dynamically -->
+    </div>
+
+    <script>
+        const quizData = [
+            // 2回目 (5問)
+            { round: 2, num: 1, text: "領域人間関係のねらいは、戦後保育要領が制定されて以来、一度も変更されていない。", answer: false, exp: "【間違い】時代や社会状況の変化に伴い、要領・指針の改訂のたびにねらいや内容は変更・更新されています。" },
+            { round: 2, num: 2, text: "1956年に幼稚園教育要領が制定されたときに初めて、領域「人間関係」は設定された。", answer: false, exp: "【間違い】1956年の制定時は「社会」領域であり、領域「人間関係」が新設・再編されたのは1989（平成元）年の改訂時です。" },
+            { round: 2, num: 3, text: "現在の保育所保育指針は、3歳未満児における5領域別のねらいや内容を記載していない。", answer: false, exp: "【間違い】現在の保育所保育指針では、1歳以上3歳未満児についても「5領域（健康、人間関係、環境、言葉、表現）」の視点から示されています。" },
+            { round: 2, num: 4, text: "現在の領域人間関係において、子どもが自分に自信をもち、自己肯定感をもつことを重視する記述が盛り込まれている。", answer: true, exp: "【正しい】現代の保育・幼児教育では、他者との関係構築の基盤として「自己肯定感（自分を大切にする気持ち）」が非常に重視されています。" },
+            { round: 2, num: 5, text: "領域社会は、1989年の教育要領の改訂においてはじめて導入されたもので、その背景には子どもの育ちをめぐる問題意識の高まりがあった。", answer: false, exp: "【間違い】1989年の改訂で新設されたのは「人間関係」領域等であり、「社会」領域はそれ以前から存在した区分です。" },
+
+            // 3回目 (3問)
+            { round: 3, num: 1, text: "教育要領や指針に記載されているねらいは、３つ記載されている。一番上に記載されているのは、「態度」面の発達に関するねらいである。", answer: false, exp: "【間違い】ねらいは基本的に「①心情」「②意欲」「③態度」の順で構造化・記述されています。" },
+            { round: 3, num: 2, text: "領域人間関係のねらいは、他者と協調することやルールの大切さを知ることを重視しており、子どもが自分の思いを主張したり、自分らしさを発揮しようとすることは重視していない。", answer: false, exp: "【間違い】協調性やルール遵守だけでなく、子ども自身が思いを主張することや自分らしさを表現することも同様に重視されています。" },
+            { round: 3, num: 3, text: "乳児期におけるねらいや内容についても、近年、5領域の視点から記載がされるようになった。", answer: false, exp: "【間違い】乳児（1歳未満）は「健やかに育つ」「しなやかに育つ」「心豊かに育つ」などの3つの視点で示されており、5領域で示されるのは1歳以上からです。" },
+
+            // 4回目 (5問)
+            { round: 4, num: 1, text: "親子間の愛着関係の安定度を確かめるために、一時的に母子を分離させる方法を開発したのはボウルビーである。", answer: false, exp: "【間違い】ストレンジ・シチュエーション実験法を開発したのはエインスワースです（ボウルビーは愛着理論の提唱者）。" },
+            { round: 4, num: 2, text: "人見知りは、養育者との間にある愛着関係が不安定であることを示している。", answer: false, exp: "【間違い】人見知りは、特定の養育者との愛着関係が形成され、知らない人との区別ができるようになった健全な発達の証拠です。" },
+            { round: 4, num: 3, text: "領域人間関係のねらいでは、養育者と乳児との安定した関係に関する記述はあるが、保育者と乳児との関係については触れていない。", answer: false, exp: "【間違い】園における「特定の子どもに関わる保育者」との間の安定した信頼関係や受容的関わりについても明記されています。" },
+            { round: 4, num: 4, text: "特定の養育者との愛着関係の形成は、その後の発達段階における様々な課題を乗り越えていく上で重要だと考えられている。", answer: true, exp: "【正しい】特定の大人との安定した愛着関係（安全基地）は、その後の自己統制や他者との関係構築などの基盤となります。" },
+            { round: 4, num: 5, text: "子どもが幼い時期に母親が就労することは、子どもの情緒面に発達に悪影響があることが研究によって示されている。", answer: false, exp: "【間違い】母親の就労そのものが子どもの情緒発達に悪影響を与えるという実証根拠はなく、保育や関わりの「質」が重要とされています。" },
+
+            // 5回目 (2問：重複の問1を除外)
+            { round: 5, num: 1, text: "子育て支援の場では、保護者が自分自身や育児に対して肯定的な感情をもてるようにサポートすることも重要である。", answer: true, exp: "【正しい】保護者の育児肯定感や心理的安定を支えることが、子どもへの良好な関わりや発達支援につながります。" },
+            { round: 5, num: 2, text: "養育者が子どもと安定した愛着を形成するためには、子どもの欲求のすべてに応え、即座に願いをかなえることが重要である。", answer: false, exp: "【間違い】すべての要求を即座に叶えること（過干渉・甘やかし）ではなく、子どものシグナルに対して一貫性を持って適切に共感的対応をすることが重要です。" },
+
+            // 6回目 (3問)
+            { round: 6, num: 1, text: "一斉型の保育では、保育士が持ち場を決めて、そこに来た子どもを対応することになる。そのため子どもが一日園でどのように過ごしたのかを連続的に把握するのが難しい。", answer: false, exp: "【間違い】記述の内容は「コーナー保育（自由選択保育）」などの説明であり、全員が同じ活動をする一斉保育の説明ではありません。" },
+            { round: 6, num: 2, text: "担当制保育は、子どもと保育士が愛着関係を形成しやすく、課題も見当たらない優れた保育形態である。", answer: false, exp: "【間違い】担当制保育には親密な愛着が形成されやすい利点がある一方で、特定保育士への依存やスタッフ間の連携難などの課題も存在します。" },
+            { round: 6, num: 3, text: "保育士は、子どもの「泣き」を生理的欲求によると解釈していても、抱き上げるなどの社会的な対処を選択することが多い。", answer: true, exp: "【正しい】オムツや空腹などの生理的理由であっても、保育士は「抱っこする」「声をかける」といった社会的相互作用による受容的アプローチを行います。" },
+
+            // 7回目 (9問)
+            { round: 7, num: 1, text: "「保育教諭等の愛情豊かな受容の下で、生理的・心理的欲求を満たし、心地よく生活する。」というねらいは、「イ 身近な人と気持ちが通じ合う」に記載されている。", answer: true, exp: "【正しい】乳児保育（生命の保持・情緒の安定）における愛着形成に関わる重要なねらいとして記載されています。" },
+            { round: 7, num: 2, text: "乳児による「泣き」の原因は、生理的な不快によるものがほとんどである。", answer: false, exp: "【間違い】乳児の泣きには、生理的不快だけでなく、不安、寂しさ、関わりを求める社会的心理欲求など様々な要因があります。" },
+            { round: 7, num: 3, text: "保育者は、子どもが思い通りにいかずに泣いているとき、毅然と対応し即座に泣き止ませる必要がある。", answer: false, exp: "【間違い】即座に止めさせるのではなく、まずは子どもの悲しい・悔しいといった気持ちを受け止め、寄り添う対応が求められます。" },
+            { round: 7, num: 4, text: "保育者の多くは、子どもの「泣き」に対応することを通じて、子どもと信頼関係が構築できると考えている。", answer: true, exp: "【正しい】子どもからのシグナル（泣き）に応答・共感することで、子どもは「この大人は信頼できる」と感じるようになります。" },
+            { round: 7, num: 5, text: "調査によって、保育の経験が長いベテランほど、子どもの「泣き」に対応することに負担を感じやすいことが明らかになっている。", answer: false, exp: "【間違い】経験豊富なベテランほど泣きの意図を洞察しやすく、見通しを持った応答ができるため負担感は低くなる傾向にあります。" },
+            { round: 7, num: 6, text: "1歳以上3歳未満の人間関係にねらいには、保育者と信頼関係を形成し、周囲に関心を持つことが記載されている。", answer: true, exp: "【正しい】身近な大人（保育者）との信頼関係を基盤として、周囲の環境や他者へ関心を広げることが示されています。" },
+            { round: 7, num: 7, text: "保育者は、子どもの自己主張に毅然と対応し、自分本位な主張を正す必要がある。", answer: false, exp: "【間違い】乳幼児期の自己主張は自我の発達過程で不可欠なものです。力で正すのではなく、思いを受容し調整の支援をすることが大切です。" },
+            { round: 7, num: 8, text: "子どもの自我を育てるためには、できるだけ自己主張を控え、自らの感情を抑えることによって、周囲に協調することが重要だと教える必要がある。", answer: false, exp: "【間違い】十分な自己主張を行い、受け止められた経験があってこそ、本当の意味での自己コントロールや他者共感（協調性）が育ちます。" },
+            { round: 7, num: 9, text: "子どものイヤイヤ期は、言語や記憶、身体機能の発達と関連して生じるといわれている。", answer: true, exp: "【正しい】やりたい気持ち（運動・認知発達）に対して感情コントロールが追いつかないという、発達上の自然な摩擦として生じます。" },
+
+            // 8回目 (1問)
+            { round: 8, num: 1, text: "子どもの自己制御の発達は、脳における視床下部の発達に関連している。", answer: false, exp: "【間違い】思考・感情・行動を自らコントロールする自己制御には、脳の「前頭前野」の発達が深く関連しています。" },
+
+            // 10回目 (1問)
+            { round: 10, num: 1, text: "乳幼児期はルールの大切さを学ぶ時期である。ルールを守らない子どもには毅然と対応し、状況次第では罰することも必要である。", answer: false, exp: "【間違い】罰を与えるのではなく、なぜダメなのかをわかりやすく伝えたり、一緒に納得できる解決策を考える関わりが大切です。" },
+
+            // 11回目 (1問)
+            { round: 11, num: 1, text: "他者とイメージを共有し組織的に展開する協同的な遊びは、1歳児ごろから顕著になる。", answer: false, exp: "【間違い】イメージを共有し役割分担をして進める協同的な遊び（協同遊び）が盛んになるのは、主に4〜5歳児頃（幼児期後半）からです。" }
+        ];
+
+        let userAnswers = {};
+
+        function renderQuestions() {
+            const container = document.getElementById('quiz-container');
+            const roundFilter = document.getElementById('round-select').value;
+            container.innerHTML = '';
+
+            let filtered = quizData;
+            if (roundFilter !== 'all') {
+                filtered = quizData.filter(q => q.round === parseInt(roundFilter));
+            }
+
+            let currentRound = null;
+
+            filtered.forEach((q) => {
+                if (q.round !== currentRound && roundFilter === 'all') {
+                    currentRound = q.round;
+                    const sectionHeader = document.createElement('div');
+                    sectionHeader.className = 'section-title';
+                    sectionHeader.innerHTML = `<span>第${currentRound}回問題</span>`;
+                    container.appendChild(sectionHeader);
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+
+                const globalIdx = quizData.indexOf(q);
+                const isAnswered = userAnswers[globalIdx] !== undefined;
+                const userAnswer = userAnswers[globalIdx];
+                const isCorrect = userAnswer === q.answer;
+
+                card.innerHTML = `
+                    <div class="question-header">
+                        <span class="question-number">${q.round}回目 - 問題 ${q.num}</span>
+                    </div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="btn-group">
+                        <button class="btn-choice ${isAnswered && userAnswer === true ? 'selected-maru' : ''}" 
+                                onclick="checkAnswer(${globalIdx}, true)" 
+                                ${isAnswered ? 'disabled' : ''}>
+                            〇 （正しい）
+                        </button>
+                        <button class="btn-choice ${isAnswered && userAnswer === false ? 'selected-batsu' : ''}" 
+                                onclick="checkAnswer(${globalIdx}, false)" 
+                                ${isAnswered ? 'disabled' : ''}>
+                            ✕ （間違い）
+                        </button>
+                    </div>
+                    <div class="result-box ${isCorrect ? 'correct' : 'incorrect'}" style="display: ${isAnswered ? 'block' : 'none'};">
+                        <div class="result-title">
+                            ${isCorrect ? '<span>正解！🎉</span>' : '<span>不正解... ❌</span>'}
+                            <span style="font-size: 0.9rem; font-weight: normal; margin-left: 10px;">(正解: ${q.answer ? '〇' : '✕'})</span>
+                        </div>
+                        <div class="explanation">${q.exp}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            updateScore();
+        }
+
+        function checkAnswer(index, choice) {
+            userAnswers[index] = choice;
+            renderQuestions();
+        }
+
+        function updateScore() {
+            const totalAnswered = Object.keys(userAnswers).length;
+            let correctCount = 0;
+
+            Object.keys(userAnswers).forEach(idx => {
+                if (userAnswers[idx] === quizData[idx].answer) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('score-display').textContent = `正解数: ${correctCount} / ${totalAnswered} (全${quizData.length}問)`;
+        }
+
+        function filterQuestions() {
+            renderQuestions();
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            renderQuestions();
+        }
+
+        window.onload = renderQuestions;
+    </script>
+</body>
+</html>
+index.html
+「index.html」を表示しています。
